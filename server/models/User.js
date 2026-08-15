@@ -1,97 +1,38 @@
 const mongoose = require("mongoose");
 
-const interviewSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
-    // User who owns this interview
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    name: {
+      type: String,
       required: true,
+      trim: true,
     },
 
-    // Type of interview
-    type: {
+    email: {
       type: String,
-      enum: [
-        "technical",
-        "behavioral",
-        "hr",
-        "mixed",
-      ],
-      default: "technical",
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
 
-    // Difficulty level
-    difficulty: {
+    password: {
       type: String,
-      enum: [
-        "easy",
-        "medium",
-        "hard",
-      ],
-      default: "medium",
+      required: true,
+      minlength: 6,
     },
 
-    // Technologies/topics selected for interview
-    technologies: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-
-    // Interview status
-    status: {
+    role: {
       type: String,
-      enum: [
-        "created",
-        "in-progress",
-        "completed",
-      ],
-      default: "created",
+      enum: ["user", "admin"],
+      default: "user",
     },
-
-    // Overall score after completion
-    score: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
-    },
-
-    // Interview questions and answers
-    questions: [
-      {
-        question: {
-          type: String,
-          required: true,
-        },
-
-        answer: {
-          type: String,
-          default: "",
-        },
-
-        score: {
-          type: Number,
-          default: 0,
-          min: 0,
-          max: 10,
-        },
-
-        feedback: {
-          type: String,
-          default: "",
-        },
-      },
-    ],
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model(
-  "Interview",
-  interviewSchema
-);
+module.exports =
+  mongoose.models.User ||
+  mongoose.model("User", userSchema);
