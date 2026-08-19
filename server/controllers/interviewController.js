@@ -1,4 +1,5 @@
 const Interview = require("../models/Interview");
+
 // ===============================
 // CREATE INTERVIEW
 // ===============================
@@ -92,11 +93,59 @@ const getInterviewById = async (req, res) => {
 };
 
 // ===============================
+// UPDATE INTERVIEW
+// ===============================
+const updateInterview = async (req, res) => {
+  try {
+    const { status, score, questions } = req.body;
+
+    const interview = await Interview.findOne({
+      _id: req.params.id,
+      user: req.user.userId,
+    });
+
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: "Interview not found",
+      });
+    }
+
+    if (status !== undefined) {
+      interview.status = status;
+    }
+
+    if (score !== undefined) {
+      interview.score = score;
+    }
+
+    if (questions !== undefined) {
+      interview.questions = questions;
+    }
+
+    await interview.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Interview updated successfully",
+      interview,
+    });
+  } catch (error) {
+    console.error("Update interview error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ===============================
 // EXPORT CONTROLLERS
 // ===============================
 module.exports = {
   createInterview,
   getMyInterviews,
   getInterviewById,
+  updateInterview,
 };
-
